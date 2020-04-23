@@ -254,7 +254,7 @@ void MainScene::keyPressEvent(QKeyEvent *event)
     }
     if(event->key() == Qt::Key_Down){
         if (pos.y() < 300){
-            player->setPos(player->x(), player->y()+15);
+            player->setPos(player->x(), 300);
         }
     }
     else if(event->key() == Qt::Key_Left){

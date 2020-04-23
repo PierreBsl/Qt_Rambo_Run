@@ -5,6 +5,8 @@
 #include <QMediaPlayer>
 #include <QGraphicsPixmapItem>
 #include <QObject>
+#include <QPointF>
+#include <QVector2D>
 #include <QGraphicsItem>
 #include <QPropertyAnimation>
 
@@ -17,9 +19,10 @@ class Player: public QGraphicsPixmapItem
 public slots:
 
     void startPlaying();
-    void fallToGroundIfNecessary();
 
 public:
+
+    void jump();
 
     QGraphicsPixmapItem * gameOverPix;
 
@@ -29,13 +32,15 @@ public:
 
     void setDescription(const QString &description) { this->description = description; }
 
-public slots:
-
 private :
 
-
+    QPointF position;
+    QVector2D velocity;
+    QVector2D gravity;
     QString description;
     qreal groundPosition;
+
+    float previousTime;
 
 
 };

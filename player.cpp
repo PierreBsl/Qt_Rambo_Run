@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QVector>
 #include <QTimer>
 #include <QVector>
 #include <QGraphicsScene>
@@ -19,6 +20,7 @@ extern gameOver * gameover;
 extern QMediaPlayer * gameOverSound;
 extern QMediaPlayer * endGameSound;
 extern EndGame * endgame;
+extern Player * player;
 
 
 Player::Player(QString description, QString imageFileName) : QGraphicsPixmapItem(QPixmap(imageFileName)), description(description) {
@@ -30,10 +32,9 @@ void Player::startPlaying(){
 
     QList<QGraphicsItem *>colliding_items = collidingItems();
     for(int i=0, n=colliding_items.size(); i<n; ++i){
-        if(typeid(*(colliding_items[i])) == typeid(Monster) && this->x()>monster->x()+20){
+        if(typeid(*(colliding_items[i])) == typeid(Monster)){
             //decrease health
             health->decrease();
-            return;
         }
         if(typeid(*(colliding_items[i])) == typeid(Wall)){
             this->setX(x()-15);
@@ -65,3 +66,9 @@ void Player::startPlaying(){
     }
 }
 
+void Player::jump(){
+
+    while (true){
+
+    }
+}

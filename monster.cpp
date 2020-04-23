@@ -9,7 +9,9 @@
 #include <QDebug>
 #include <stdlib.h>
 
+extern MainScene * mainScene;
 extern Health * health;
+extern Monster * monster;
 
 Monster::Monster(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 {
@@ -34,6 +36,10 @@ void Monster::move()
         scene()->removeItem(this);
         delete this;
         qDebug() << "monster deleted";
-    }    
+    }
+    if(pos().x() == 700){
+        monster = new Monster();
+        mainScene->addItem(monster);
+    }
 }
 
