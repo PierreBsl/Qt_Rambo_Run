@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/bullet1.png</file>
+        <file>img/enemy1.png</file>
+        <file>img/game_over.png</file>
+        <file>img/panorama1.jpg</file>
+        <file>img/spike1.png</file>
+        <file>img/spike2.png</file>
+        <file>img/spike3.png</file>
+        <file>img/test.png</file>
+        <file>img/noir.jpg</file>
+        <file>img/porte.jpg</file>
+        <file>img/grillage.png</file>
+        <file>img/grillage.jpg</file>
+        <file>img/Win.png</file>
+    </qresource>
+    <qresource prefix="/sounds">
+        <file>sounds/fun.mp3</file>
+        <file>sounds/epic.wav</file>
+        <file>sounds/applaudissements.wav</file>
+    </qresource>
+</RCC>
