@@ -5,31 +5,26 @@
 #include <QFont>
 #include <QPushButton>
 #include <QImage>
-#include "player.h"
 #include "mainwindow.h"
 
+MainScene* mainScene;
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
-    this->mainScene = new MainScene();
+    mainScene = new MainScene();
 
-    const QVector<Player*>& players = this->mainScene->getPlayers();
+    player->setFlag(QGraphicsItem::ItemIsFocusable);
+    player->setFocus();
 
-    for(Player* player : players){
+    QGraphicsView* playerView = new QGraphicsView();
+    playerView->setScene(mainScene);
+    playerView->resize(300, 300);
+    playerView->setWindowTitle(player->getDescription());
+    playerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    playerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    playerView->show();
 
-        player->setFlag(QGraphicsItem::ItemIsFocusable);
-        player->setFocus();
-        player->setPos(0,300);
 
-        QGraphicsView* playerView = new QGraphicsView();
-        playerView->setScene(mainScene);
-        playerView->resize(300, 300);
-        playerView->setWindowTitle(player->getDescription());
-        playerView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        playerView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        playerView->show();
-
-    }
 
     mainView = new QGraphicsView();
     mainView->setScene(mainScene);

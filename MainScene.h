@@ -23,6 +23,7 @@
 #include <QRectF>
 #include <QGraphicsPixmapItem>
 
+extern Player * player;
 
 class MainScene : public QGraphicsScene, public QGraphicsPixmapItem {
 
@@ -32,7 +33,6 @@ private :
 
     QPixmap background;
     QTimer * timer;
-    QVector<Player*> playerItems;
     QMediaPlayer * bulletsound;
 
     QPushButton * pauseGameButton;
@@ -48,7 +48,6 @@ private :
     Wall * wall;
     Floor * floor;
     Void * vide;
-    Monster * monster;
 
     void showGameOverGraphics();
     void hideGameOverGraphics();
@@ -73,7 +72,7 @@ public:
 
     MainScene();
     void drawBackground(QPainter* painter, const QRectF& rect);
-    const QVector<Player*>& getPlayers(){return playerItems;}
+    const Player * getPlayer(){return player;}
 
     virtual ~MainScene();
 

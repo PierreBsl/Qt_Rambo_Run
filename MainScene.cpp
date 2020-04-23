@@ -13,6 +13,9 @@
 #include <QVector>
 #include <QDebug>
 
+extern MainScene* mainScene;
+
+Player * player;
 Score * score;
 Health * health;
 QTimer * timer_chrono;
@@ -20,6 +23,7 @@ gameOver * gameover;
 QMediaPlayer * gameOverSound;
 QMediaPlayer * endGameSound;
 EndGame * endgame;
+Monster * monster;
 
 MainScene::MainScene() {
 
@@ -36,7 +40,9 @@ MainScene::MainScene() {
 
     connect(startGameButton, SIGNAL(clicked()), this, SLOT(startGame()));
 
-    this->playerItems.push_back(new Player("Heroe", ":/img/test.png"));
+    player = new Player("Heroe", ":/img/test.png");
+    player->setPos(0,300);
+    this->addItem(player);
 
 }
 
@@ -73,12 +79,12 @@ void MainScene::startGame()
 
         pauseGameButton  = new QPushButton("PAUSE GAME");
         pauseGameButton->setFixedSize(100, 35);
-        pauseGameButton->move(570,-36);
+        pauseGameButton->move(770,-36);
         this->addWidget(pauseGameButton);
 
         resumeGameButton  = new QPushButton("RESUME GAME");
         resumeGameButton->setFixedSize(100, 35);
-        resumeGameButton->move(780,-36);
+        resumeGameButton->move(880,-36);
         this->addWidget(resumeGameButton);
 
         chronoLCD = new QLCDNumber();
@@ -132,12 +138,11 @@ void MainScene::startGame()
         monster = new Monster();
         this->addItem(monster);
 
-        Player* playerItem = this->playerItems[0];
-
-        this->addItem(playerItem);
-
-        // all the planeItems on the right side of the scene
-        playerItems[0]->setPos(0, 300);
+        //spawn player
+        if(player){removeItem(player);}
+        player = new Player("Heroe", ":/img/test.png");
+        player->setPos(0,300);
+        this->addItem(player);
 
         //add bullet sound
         bulletsound = new QMediaPlayer();
@@ -145,7 +150,7 @@ void MainScene::startGame()
 
         //add game over sound
         gameOverSound = new QMediaPlayer();
-        gameOverSound->setMedia(QUrl("qrc:/sounds/sounds/gameover.mp3"));
+        gameOverSound->setMedia(QUrl("qrc:/sounds/sounds/gameover.wav"));
 
         //add game over sound
         endGameSound = new QMediaPlayer();
@@ -158,6 +163,7 @@ void MainScene::startGame()
         connect( pauseGameButton, SIGNAL(clicked()), music , SLOT(pause()));
         connect( resumeGameButton, SIGNAL(clicked()), music, SLOT(play()));
         connect( restartGameButton, SIGNAL(clicked()), music, SLOT(stop()));
+        connect( restartGameButton, SIGNAL(clicked()), endGameSound, SLOT(stop()));
 
         timer_chrono -> start(1000); // 1000 ms
 
@@ -172,24 +178,13 @@ void MainScene::clearGame()
 
     setGameOn(false);
 
-    if(gameover){
-        removeItem(gameover);
-    }
-    if(score){
-        removeItem(score);
-    }
-    if(health){
-        removeItem(health);
-    }
-    if(endgame){
-        removeItem(endgame);
-    }
-    if(wall){
-        removeItem(wall);
-    }
-    if(vide){
-        removeItem(vide);
-    }
+    if(gameover){removeItem(gameover);}
+    if(score){removeItem(score);}
+    if(health){removeItem(health);}
+    if(endgame){removeItem(endgame);}
+    if(wall){removeItem(wall);}
+    if(vide){removeItem(vide);}
+
     if(countTimer<bestTime){
         bestTime = countTimer;
     }
@@ -228,11 +223,11 @@ void MainScene::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MainScene::update() {
 
-    playerItems[0]->startPlaying();
+    player->startPlaying();
 
     // view update
     QGraphicsView * view = this->views().at(0);
-    view->centerOn(playerItems[0]);
+    view->centerOn(player);
 }
 
 void MainScene::onTimer_Tick()
@@ -244,47 +239,44 @@ void MainScene::onTimer_Tick()
 MainScene::~MainScene() {
 
     delete this->timer;
+    delete player;
 
-    for(Player* playerItem : this->playerItems){
-        delete playerItem;
-    }
 }
 
 void MainScene::keyPressEvent(QKeyEvent *event)
 {
-    QPointF pos = playerItems[0]->pos();
+    QPointF pos = player->pos();
 
     if(event->key() == Qt::Key_Up){
         if (pos.y() > 0){
-            playerItems[0]->setPos(playerItems[0]->x(), playerItems[0]->y()-15);
+            player->setPos(player->x(), player->y()-15);
         }
     }
     if(event->key() == Qt::Key_Down){
         if (pos.y() < 300){
-            playerItems[0]->setPos(playerItems[0]->x(), playerItems[0]->y()+15);
+            player->setPos(player->x(), player->y()+15);
         }
     }
     else if(event->key() == Qt::Key_Left){
         if (pos.x() > 0){
-            playerItems[0]->setPos(playerItems[0]->x()-15, playerItems[0]->y());
+            player->setPos(player->x()-15, player->y());
         }
     }
     else if(event->key() == Qt::Key_Right){
         if (pos.x() < 1100){
-            playerItems[0]->setPos(playerItems[0]->x()+15,playerItems[0]-> y());
+            player->setPos(player->x()+15,player-> y());
         }
     }
     else if(event->key() == Qt::Key_Space){
 
         //create a bullet
         Bullet * bullet = new Bullet();
-        bullet->setPos(playerItems[0]->x()+100,playerItems[0]->y()+40);
+        bullet->setPos(player->x()+100,player->y()+40);
         this->addItem(bullet);
 
         //play bulletsound
         if (bulletsound->state() == QMediaPlayer::PlayingState){
             bulletsound->setPosition(0);
-
         }
         else if (bulletsound->state() == QMediaPlayer::StoppedState){
             bulletsound->play();

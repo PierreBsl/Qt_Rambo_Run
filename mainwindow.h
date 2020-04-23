@@ -2,23 +2,20 @@
 #define MAINWINDOW_H
 
 #include "MainScene.h"
-#include "player.h"
 #include <QGraphicsScene>
 #include <QMainWindow>
 #include <QGraphicsView>
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QVector>
-
+#include "player.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 private :
-    MainScene* mainScene;
-
-    QVector<QGraphicsView*> playerViews;
+    QGraphicsView playerView;
     QGraphicsView* mainView;
     QPushButton * pauseGameButton;
 
@@ -26,12 +23,8 @@ private :
 private slots:
 public:
 
-    Health * health;
-
     MainWindow(QWidget* parent = nullptr);
     virtual ~MainWindow() {};
-
-
 
 };
 

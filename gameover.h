@@ -8,6 +8,7 @@ class gameOver: public QGraphicsPixmapItem
 public:
     gameOver();
 
+    void display();
 };
 
 #endif // GAMEOVER_H

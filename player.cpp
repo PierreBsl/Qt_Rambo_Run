@@ -30,10 +30,9 @@ void Player::startPlaying(){
 
     QList<QGraphicsItem *>colliding_items = collidingItems();
     for(int i=0, n=colliding_items.size(); i<n; ++i){
-        if(typeid(*(colliding_items[i])) == typeid(Monster)){
+        if(typeid(*(colliding_items[i])) == typeid(Monster) && this->x()>monster->x()+20){
             //decrease health
             health->decrease();
-
             return;
         }
         if(typeid(*(colliding_items[i])) == typeid(Wall)){
@@ -45,16 +44,8 @@ void Player::startPlaying(){
         if(typeid(*(colliding_items[i])) == typeid(Void)){
 
             qDebug() << "TOUCHED";
-            if (gameOverSound->state() == QMediaPlayer::PlayingState){
-                gameOverSound->setPosition(0);
+            gameover->display();
 
-            }
-            else if (gameOverSound->state() == QMediaPlayer::StoppedState){
-                gameOverSound->play();
-            }
-            scene()->addItem(gameover);
-            scene()->removeItem(this);
-            timer_chrono->stop();
         }
         if(typeid(*(colliding_items[i])) == typeid(EndGame)){
 
@@ -73,3 +64,4 @@ void Player::startPlaying(){
         }
     }
 }
+
