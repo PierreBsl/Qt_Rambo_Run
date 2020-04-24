@@ -10,7 +10,7 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <QFont>
-#include <QVector>
+#include <iostream>
 #include <QDebug>
 
 extern MainScene* mainScene;
@@ -24,6 +24,7 @@ QMediaPlayer * gameOverSound;
 QMediaPlayer * endGameSound;
 EndGame * endgame;
 Monster * monster;
+Wall * wall;
 
 MainScene::MainScene() {
 
@@ -43,7 +44,6 @@ MainScene::MainScene() {
     player = new Player("Heroe", ":/img/test.png");
     player->setPos(0,300);
     this->addItem(player);
-
 }
 
 void MainScene::startGame()
@@ -223,7 +223,14 @@ void MainScene::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MainScene::update() {
 
-    player->startPlaying();
+    std::cout << player->getStatus() << std::endl;
+
+    if (player->getStatus() != "Jumping") {
+        player->setPreviousStatus(player->getStatus());
+    }
+
+    player->move();
+    player->collisions();
 
     // view update
     QGraphicsView * view = this->views().at(0);
@@ -245,41 +252,50 @@ MainScene::~MainScene() {
 
 void MainScene::keyPressEvent(QKeyEvent *event)
 {
-    QPointF pos = player->pos();
 
-    if(event->key() == Qt::Key_Up){
-        if (pos.y() > 0){
-            player->setPos(player->x(), player->y()-15);
-        }
-    }
-    if(event->key() == Qt::Key_Down){
-        if (pos.y() < 300){
-            player->setPos(player->x(), 300);
-        }
-    }
-    else if(event->key() == Qt::Key_Left){
-        if (pos.x() > 0){
-            player->setPos(player->x()-15, player->y());
-        }
-    }
-    else if(event->key() == Qt::Key_Right){
-        if (pos.x() < 1100){
-            player->setPos(player->x()+15,player-> y());
-        }
-    }
-    else if(event->key() == Qt::Key_Space){
+    if (player->getStatus() == "Standing" || player->getStatus() == "Running") {
 
-        //create a bullet
-        Bullet * bullet = new Bullet();
-        bullet->setPos(player->x()+100,player->y()+40);
-        this->addItem(bullet);
+        if(event->key() == Qt::Key_Up){
+            if (event->isAutoRepeat()) {
+                return;
+            }
+            std::string previousStatus = player->getStatus();
+            player->setStatus("Jumping", previousStatus);
+        }
+        else if(event->key() == Qt::Key_Left){
+            player->setStatus("Running");
+            player->setDirection("Left");
 
-        //play bulletsound
-        if (bulletsound->state() == QMediaPlayer::PlayingState){
-            bulletsound->setPosition(0);
         }
-        else if (bulletsound->state() == QMediaPlayer::StoppedState){
-            bulletsound->play();
+        else if(event->key() == Qt::Key_Right){
+            player->setStatus("Running");
+            player->setDirection("Right");
+
         }
+        else if(event->key() == Qt::Key_Space){
+
+            //create a bullet
+            Bullet * bullet = new Bullet();
+            bullet->setPos(player->x()+100,player->y()+40);
+            this->addItem(bullet);
+
+            //play bulletsound
+            if (bulletsound->state() == QMediaPlayer::PlayingState){
+                bulletsound->setPosition(0);
+            }
+            else if (bulletsound->state() == QMediaPlayer::StoppedState){
+                bulletsound->play();
+            }
+        }
+    }
+}
+
+void MainScene::keyReleaseEvent(QKeyEvent *event) {
+
+    if(player->getStatus() != "Jumping" && player->getStatus() != "Falling") {
+        if (event->isAutoRepeat()) {
+            return;
+        }
+        player->setStatus("Standing");
     }
 }

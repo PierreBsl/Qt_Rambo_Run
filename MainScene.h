@@ -45,7 +45,6 @@ private :
     int bestTime=100;
     bool gameOn;
 
-    Wall * wall;
     Floor * floor;
     Void * vide;
 
@@ -66,6 +65,7 @@ public:
     void updateCount();
 
     void keyPressEvent(QKeyEvent * event);
+    void keyReleaseEvent(QKeyEvent *event);
 
     bool getGameOn() const;
     void setGameOn(bool value);

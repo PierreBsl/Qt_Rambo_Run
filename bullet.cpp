@@ -41,7 +41,7 @@ void Bullet::move()
         }
     }
     //move bullet up
-    setPos(x()+10, y());
+    setPos(x()+20, y());
     if(pos().x() > 1200){
         scene()->removeItem(this);
         delete this;
