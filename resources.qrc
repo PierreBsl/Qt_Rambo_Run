@@ -13,6 +13,8 @@
         <file>img/grillage.png</file>
         <file>img/grillage.jpg</file>
         <file>img/Win.png</file>
+        <file>img/plateform.png</file>
+        <file>img/panorama.jpg</file>
     </qresource>
     <qresource prefix="/sounds">
         <file>sounds/fun.mp3</file>

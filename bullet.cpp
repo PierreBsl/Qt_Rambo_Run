@@ -8,6 +8,7 @@
 #include <QList>
 
 extern Score * score;
+extern Player * player;
 
 Bullet::Bullet(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 {
@@ -27,7 +28,7 @@ void Bullet::move()
     for(int i=0, n=colliding_items.size(); i<n; ++i){
         if(typeid(*(colliding_items[i])) == typeid(Monster)){
             //increase score
-           score->increase();
+            score->increase();
 
             //remove them both
             qDebug() << "Colliding";
@@ -47,4 +48,5 @@ void Bullet::move()
         delete this;
         qDebug() << "Bullet deleted";
     }
+
 }

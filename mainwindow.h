@@ -19,13 +19,13 @@ private :
     QGraphicsView* mainView;
     QPushButton * pauseGameButton;
 
-
-private slots:
 public:
 
     MainWindow(QWidget* parent = nullptr);
     virtual ~MainWindow() {};
 
+public slots:
+    void username();
 };
 
 #endif // MAINWINDOW_H

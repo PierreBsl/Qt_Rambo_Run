@@ -9,5 +9,5 @@ EndGame::EndGame(QGraphicsItem *parent): QGraphicsPixmapItem(parent)
 void EndGame::endScreen()
 {
     setPixmap(QPixmap(":/img/Win.png"));
-    setPos(this->x()-725,this->y()-250);
+    setPos(450,100);
 }

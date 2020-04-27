@@ -16,7 +16,7 @@ extern Monster * monster;
 Monster::Monster(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 {
     //set Position
-    setPos(1200, 340);
+    setPos(1200, 390);
     //drew the rect
     setPixmap(QPixmap(":/img/enemy1.png"));
 

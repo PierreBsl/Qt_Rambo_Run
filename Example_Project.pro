@@ -27,6 +27,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     monster.cpp \
+    plateform.cpp \
     player.cpp \
     score.cpp \
     void.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     health.h \
     mainwindow.h \
     monster.h \
+    plateform.h \
     player.h \
     score.h \
     void.h \

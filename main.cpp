@@ -10,5 +10,6 @@ int main(int argc, char *argv[]) {
     qsrand((uint)time.msec());
     MainWindow mainWindow;
     mainWindow.show();
+
     return application.exec();
 }

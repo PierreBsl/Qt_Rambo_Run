@@ -1,5 +1,6 @@
 #include "MainScene.h"
 #include "Utils.h"
+#include <QApplication>
 #include <QHBoxLayout>
 #include <QGraphicsScene>
 #include <QKeyEvent>
@@ -10,10 +11,13 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <QFont>
+#include <QInputDialog>
+#include <QMessageBox>
 #include <iostream>
 #include <QDebug>
 
 extern MainScene* mainScene;
+extern QString pseudo;
 
 Player * player;
 Score * score;
@@ -25,24 +29,19 @@ QMediaPlayer * endGameSound;
 EndGame * endgame;
 Monster * monster;
 Wall * wall;
+Wall * wall1;
+Void * vide;
+Plateform * plateform;
 
 MainScene::MainScene() {
 
-    this->background.load(":/img/panorama1.jpg");
+    this->background.load(":/img/panorama.jpg");
     this->setSceneRect(0, 0, background.width(), background.height());
 
-    this->timer = new QTimer(this);
+    this->timer = new QTimer(this);    
 
-    QPushButton * startGameButton = new QPushButton("START GAME");
-    startGameButton->setObjectName(QString::fromUtf8("startGameButton"));
-    startGameButton->setFixedSize(200, 35);
-    startGameButton->move(0,-36);
-    this->addWidget(startGameButton);
-
-    connect(startGameButton, SIGNAL(clicked()), this, SLOT(startGame()));
-
-    player = new Player("Heroe", ":/img/test.png");
-    player->setPos(0,300);
+    player = new Player(pseudo, ":/img/test.png");
+    player->setPos(0,350);
     this->addItem(player);
 }
 
@@ -53,7 +52,7 @@ void MainScene::startGame()
 
         //build end game door
         endgame = new EndGame();
-        endgame->setPos(1100, 300);
+        endgame->setPos(1200, 350);
         this->addItem(endgame);
 
         setGameOn(true);
@@ -77,25 +76,33 @@ void MainScene::startGame()
 
         connect(restartGameButton, SIGNAL(clicked()), this, SLOT(clearGame()));
 
+        quitGameButton = new QPushButton("QUIT GAME");
+        quitGameButton->setObjectName(QString::fromUtf8("quitGameButton"));
+        quitGameButton->setFixedSize(200, 35);
+        quitGameButton->move(420,-36);
+        this->addWidget(quitGameButton);
+
+        connect(quitGameButton, SIGNAL(clicked()), this, SLOT(quit()));
+
         pauseGameButton  = new QPushButton("PAUSE GAME");
         pauseGameButton->setFixedSize(100, 35);
-        pauseGameButton->move(770,-36);
+        pauseGameButton->move(870,-36);
         this->addWidget(pauseGameButton);
 
         resumeGameButton  = new QPushButton("RESUME GAME");
         resumeGameButton->setFixedSize(100, 35);
-        resumeGameButton->move(880,-36);
+        resumeGameButton->move(980,-36);
         this->addWidget(resumeGameButton);
 
         chronoLCD = new QLCDNumber();
         chronoLCD->setFixedSize(100, 35);
-        chronoLCD->move(990,-36);
+        chronoLCD->move(1090,-36);
 
         this->addWidget(chronoLCD);
 
         bestChronoLCD = new QLCDNumber();
         bestChronoLCD->setFixedSize(100, 35);
-        bestChronoLCD->move(1100,-36);
+        bestChronoLCD->move(1200,-36);
 
         this->addWidget(bestChronoLCD);
 
@@ -112,27 +119,37 @@ void MainScene::startGame()
         int x_position = 0;
         for (int i=0; i<7; i++){
             floor = new Floor();
-            floor->setPos(x_position,400);
+            floor->setPos(x_position,449);
             this->addItem(floor);
             x_position += 200;
         }
 
         //build wall
-        int tmp =  Utils::randInt(200, 1000);
+        int tmp =  Utils::randInt(200, 1100);
+        if (tmp >=900 || tmp <= 450){
+            wall1 = new Wall();
+            wall1->setPos(tmp-700, 300);
+            this->addItem(wall1);
+        }
         wall = new Wall();
-        wall->setPos(tmp, 250);
+        wall->setPos(tmp, 300);
         this->addItem(wall);
 
         //build void
         int t = 0;
-        if(tmp+400>800){
-            t = tmp-400;
+        if(tmp+450>1000){
+            t = tmp-450;
         }else{
-            t = tmp+400;
+            t = tmp+450;
         }
         vide = new Void();
-        vide->setPos(t, 399);
+        vide->setPos(t, 449);
         this->addItem(vide);
+
+        plateform = new Plateform(":/img/plateform.png");
+        plateform->setPos(t,449);
+        this->addItem(plateform);
+
 
         //spawn monster
         monster = new Monster();
@@ -140,8 +157,8 @@ void MainScene::startGame()
 
         //spawn player
         if(player){removeItem(player);}
-        player = new Player("Heroe", ":/img/test.png");
-        player->setPos(0,300);
+        player = new Player(pseudo, ":/img/test.png");
+        player->setPos(0,350);
         this->addItem(player);
 
         //add bullet sound
@@ -152,7 +169,7 @@ void MainScene::startGame()
         gameOverSound = new QMediaPlayer();
         gameOverSound->setMedia(QUrl("qrc:/sounds/sounds/gameover.wav"));
 
-        //add game over sound
+        //add end game sound
         endGameSound = new QMediaPlayer();
         endGameSound->setMedia(QUrl("qrc:/sounds/sounds/applaudissements.wav"));
 
@@ -171,6 +188,10 @@ void MainScene::startGame()
     }
 }
 
+void MainScene::quit(){
+
+    QApplication::quit();
+}
 void MainScene::clearGame()
 {
     timer->stop();
@@ -183,11 +204,10 @@ void MainScene::clearGame()
     if(health){removeItem(health);}
     if(endgame){removeItem(endgame);}
     if(wall){removeItem(wall);}
+    if(wall1){removeItem(wall1);}
     if(vide){removeItem(vide);}
 
-    if(countTimer<bestTime){
-        bestTime = countTimer;
-    }
+
     resetCount();
     chronoLCD -> display(countTimer);
     bestChronoLCD -> display(bestTime);
@@ -223,14 +243,13 @@ void MainScene::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MainScene::update() {
 
-    std::cout << player->getStatus() << std::endl;
-
-    if (player->getStatus() != "Jumping") {
-        player->setPreviousStatus(player->getStatus());
+    if (player->getPosition() != "Jumping") {
+        player->setPreviousStatus(player->getPosition());
     }
 
     player->move();
     player->collisions();
+    plateform->move();
 
     // view update
     QGraphicsView * view = this->views().at(0);
@@ -253,22 +272,22 @@ MainScene::~MainScene() {
 void MainScene::keyPressEvent(QKeyEvent *event)
 {
 
-    if (player->getStatus() == "Standing" || player->getStatus() == "Running") {
+    if (player->getPosition() == "Waiting" || player->getPosition() == "Running") {
 
         if(event->key() == Qt::Key_Up){
             if (event->isAutoRepeat()) {
                 return;
             }
-            std::string previousStatus = player->getStatus();
-            player->setStatus("Jumping", previousStatus);
+            std::string previousStatus = player->getPosition();
+            player->setPosition("Jumping", previousStatus);
         }
         else if(event->key() == Qt::Key_Left){
-            player->setStatus("Running");
+            player->setPosition("Running");
             player->setDirection("Left");
 
         }
         else if(event->key() == Qt::Key_Right){
-            player->setStatus("Running");
+            player->setPosition("Running");
             player->setDirection("Right");
 
         }
@@ -292,10 +311,10 @@ void MainScene::keyPressEvent(QKeyEvent *event)
 
 void MainScene::keyReleaseEvent(QKeyEvent *event) {
 
-    if(player->getStatus() != "Jumping" && player->getStatus() != "Falling") {
+    if(player->getPosition() != "Jumping" && player->getPosition() != "Falling") {
         if (event->isAutoRepeat()) {
             return;
         }
-        player->setStatus("Standing");
+        player->setPosition("Waiting");
     }
 }

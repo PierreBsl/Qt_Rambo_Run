@@ -3,6 +3,7 @@
 #include "monster.h"
 #include "mainwindow.h"
 #include "MainScene.h"
+#include "floor.h"
 #include <QObject>
 #include <QDebug>
 #include <QKeyEvent>
@@ -23,30 +24,30 @@ extern QMediaPlayer * endGameSound;
 extern EndGame * endgame;
 extern Player * player;
 extern Wall * wall;
-
+extern Plateform * plateform;
 
 Player::Player(QString description, QString imageFileName) : QGraphicsPixmapItem(QPixmap(imageFileName)), description(description) {
 
     setPixmap(imageFileName);
-    groundPosition = 300;
+    groundPosition = 350;
     onGround = true;
 
     wallContact=false;
     groundContact=true;
-    this->status = "Standing";
+    this->position = "Waiting";
     this->direction = "Right";
     this->setVelocity();
     this->gravity=-2;
 
 }
 
-void Player::setStatus(std::string status, std::string previousStatus) {
-    this->status = std::move(status);
+void Player::setPosition(std::string status, std::string previousStatus) {
+    this->position = std::move(status);
     this->previousStatus = std::move(previousStatus);
 }
 
-std::string Player::getStatus() {
-    return this->status;
+std::string Player::getPosition() {
+    return this->position;
 }
 
 void Player::setwallContact()
@@ -59,12 +60,15 @@ void Player::setwallContact()
     }
 }
 void Player::setgroundContact(){
-    if (this->y()==300){groundContact = true;
+    if (this->y()==350){groundContact = true;
     }else{groundContact = false;}
 }
 
 void Player::setDirection(std::string direction) {
     this->direction = std::move(direction);
+}
+std::string Player::getDirection() {
+    return this->direction;
 }
 
 void Player::setVelocity(){
@@ -77,14 +81,14 @@ void Player::setPreviousStatus(std::string previousStatus) {
 }
 
 void Player::move() {
-    if(status=="Standing"){
-        this->stand();
-    }else if(status=="Running"){
-        this->run();
-    } else if(status=="Jumping"){
-        this->jump();
-    } else if(status=="Falling") {
-        this->fall();
+    if(position=="Waiting"){
+        this->waiting();
+    }else if(position=="Running"){
+        this->running();
+    } else if(position=="Jumping"){
+        this->jumping();
+    } else if(position=="Falling") {
+        this->falling();
     }
 }
 
@@ -96,10 +100,6 @@ void Player::collisions()
             //decrease health
             health->decrease();
         }
-        if(typeid(*(colliding_items[i])) == typeid(Void)){
-            qDebug() << "TOUCHED";
-            gameover->display();
-        }
         if(typeid(*(colliding_items[i])) == typeid(Wall)){
             if (direction == "Right") {
                 this->moveBy(-25, 0);
@@ -107,6 +107,15 @@ void Player::collisions()
             else if (direction == "Left") {
                 this->moveBy(25, 0);
             }
+        }
+        if(typeid(*(colliding_items[i])) == typeid(Void)){
+            gameover->display();
+        }
+
+        if(!(typeid(*(colliding_items[i])) == typeid(Floor)) && player->y()>450){
+            qDebug() << "TOUCHED";
+            gameover->display();
+
         }
 
         if(typeid(*(colliding_items[i])) == typeid(EndGame)){
@@ -124,18 +133,18 @@ void Player::collisions()
     }
 }
 
-void Player::stand() {
+void Player::waiting() {
     if(!groundContact){
-        this->fall();
+        this->falling();
     }
 }
 
-void Player::run() {
+void Player::running() {
 
     if(groundContact) {
         if (direction == "Right") {
             this->moveBy(10, 0);
-            if(wallContact || this->x()-10 > 1100){
+            if(wallContact || this->x()-10 > 1200){
                 this->moveBy(-25, 0);
             }
         } else if (direction == "Left") {
@@ -145,14 +154,18 @@ void Player::run() {
             }
         }
     } else {
-        status = "Falling";
+        position = "Falling";
     }
 }
 
-void Player::jump() { //https://www.youtube.com/watch?v=c4b9lCfSDQM
-    if(this->previousStatus=="Standing"){
+//jump() function code has been inspired by the below video
+//Math for Game Developers - Jumping and Gravity (Time Delta, Game Loop)
+//https://www.youtube.com/watch?v=c4b9lCfSDQM
+
+void Player::jumping() {
+    if(this->previousStatus=="Waiting"){
         if (velocityY < 0 ){
-            this->status = "Falling";
+            this->position = "Falling";
             return;
         } else {
             velocityX=0;
@@ -160,7 +173,7 @@ void Player::jump() { //https://www.youtube.com/watch?v=c4b9lCfSDQM
         }
     } else {
         if (velocityY < 0 || wallContact){
-            this->status = "Falling";
+            this->position = "Falling";
             return;
         } else {
             if (direction == "Right") {
@@ -173,9 +186,9 @@ void Player::jump() { //https://www.youtube.com/watch?v=c4b9lCfSDQM
     velocityY = velocityY + gravity*0.15;
 }
 
-void Player::fall() {
-    if(wallContact){
-        if(this->pos().y()>=300){
+void Player::falling() {
+    if(wallContact||player->x()<=0){
+        if(this->pos().y()>=350){
             if(this->direction=="Right"){
                 this->direction="Left";
             } else if(this->direction=="Left"){
@@ -187,15 +200,14 @@ void Player::fall() {
     }
 
     if(this->direction=="Right"){
-
         this->moveBy(velocityX*5,velocityY*5);
     } else if(this->direction=="Left"){
         this->moveBy(-velocityX*5,velocityY*5);
     }
     velocityY = velocityY - gravity * 0.15;
 
-    if(this->pos().y()>=300){
-        this->status = "Standing";
+    if(this->pos().y()>=349){
+        this->position = "Waiting";
         this->setVelocity();
         return;
     }

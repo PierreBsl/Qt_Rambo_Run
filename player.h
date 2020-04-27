@@ -33,18 +33,19 @@ public:
     bool onGround = false;
 
     void setDirection(std::string);
+    std::string getDirection();
     void setVelocity();
     void setPreviousStatus(std::string);
 
     void move();
 
-    void run();
-    void jump();
-    void fall();
-    void stand();
+    void running();
+    void jumping();
+    void falling();
+    void waiting();
 
-    void setStatus(std::string,std::string = "");
-    std::string getStatus();
+    void setPosition(std::string,std::string = "");
+    std::string getPosition();
     void setwallContact();
     void setgroundContact();
 
@@ -54,7 +55,7 @@ public:
 
 private :
 
-    std::string status;
+    std::string position;
     std::string previousStatus;
     std::string direction;
     float velocityX;

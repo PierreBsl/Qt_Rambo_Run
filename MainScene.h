@@ -11,6 +11,7 @@
 #include "void.h"
 #include "gameover.h"
 #include "endgame.h"
+#include "plateform.h"
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 #include <QMainWindow>
@@ -32,35 +33,38 @@ class MainScene : public QGraphicsScene, public QGraphicsPixmapItem {
 private :
 
     QPixmap background;
-    QTimer * timer;
+
     QMediaPlayer * bulletsound;
 
     QPushButton * pauseGameButton;
     QPushButton * resumeGameButton;
     QPushButton * restartGameButton;
+    QPushButton * quitGameButton;
+
+    QPushButton * m_dialogButton;
+
     QLCDNumber * chronoLCD;
     QLCDNumber * bestChronoLCD;
+
+
 
     int countTimer;
     int bestTime=100;
     bool gameOn;
 
     Floor * floor;
-    Void * vide;
-
     void showGameOverGraphics();
     void hideGameOverGraphics();
 
 private slots:
 
-    void startGame();
+    void quit();
     void pauseGame();
     void resumeGame();
 
 public:
 
-    QGraphicsPixmapItem * gameOverPix;
-
+    void startGame();
     void resetCount();
     void updateCount();
 
@@ -73,17 +77,15 @@ public:
     MainScene();
     void drawBackground(QPainter* painter, const QRectF& rect);
     const Player * getPlayer(){return player;}
-
     virtual ~MainScene();
+
+    QTimer * timer;
+    QGraphicsPixmapItem * gameOverPix;
 
 public slots :
     void clearGame();
     void update();
     void onTimer_Tick();
-
-
-
-
 
 };
 
