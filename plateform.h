@@ -9,10 +9,7 @@ class Plateform: public QGraphicsPixmapItem
 private:
     int speed;
 public:
-    Plateform(QString imageFileName): QGraphicsPixmapItem(QPixmap(imageFileName))
-    {
-        this->speed = 3;
-    }
+    Plateform(QGraphicsItem * parent=0);
     int getSpeed() const { return speed; }
     void setSpeed(int speed) { this->speed = speed; }
     void move();

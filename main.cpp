@@ -1,6 +1,6 @@
 #include "mainwindow.h"
-#include "gameover.h"
 #include <QApplication>
+#include <QtWidgets>
 #include <QTime>
 
 int main(int argc, char *argv[]) {
@@ -10,6 +10,5 @@ int main(int argc, char *argv[]) {
     qsrand((uint)time.msec());
     MainWindow mainWindow;
     mainWindow.show();
-
     return application.exec();
 }

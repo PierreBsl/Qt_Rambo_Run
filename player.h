@@ -25,7 +25,7 @@ public:
 
     QGraphicsPixmapItem * gameOverPix;
 
-    Player(QString description, QString imageFileName);
+    Player(QString, const QString&, const QString&);
 
     const QString &getDescription() const {return this->description;}
     void setDescription(const QString &description) {this->description = description;}
@@ -50,7 +50,11 @@ public:
     void setgroundContact();
 
     bool wallContact;
+    bool plateformContact;
     bool groundContact;
+
+    QString imgRight;
+    QString imgLeft;
 
 
 private :
@@ -58,6 +62,7 @@ private :
     std::string position;
     std::string previousStatus;
     std::string direction;
+    std::string gun;
     float velocityX;
     float velocityY;
     float gravity;

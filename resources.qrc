@@ -3,18 +3,26 @@
         <file>img/bullet1.png</file>
         <file>img/enemy1.png</file>
         <file>img/game_over.png</file>
-        <file>img/panorama1.jpg</file>
-        <file>img/spike1.png</file>
-        <file>img/spike2.png</file>
         <file>img/spike3.png</file>
-        <file>img/test.png</file>
         <file>img/noir.jpg</file>
         <file>img/porte.jpg</file>
-        <file>img/grillage.png</file>
         <file>img/grillage.jpg</file>
         <file>img/Win.png</file>
         <file>img/plateform.png</file>
         <file>img/panorama.jpg</file>
+        <file>img/artillerie.jpg</file>
+        <file>img/grenade.png</file>
+        <file>img/grenade_left.png</file>
+        <file>img/grenade_right.png</file>
+        <file>img/mitaillette_left.png</file>
+        <file>img/mitaillette_right.png</file>
+        <file>img/mitraillete.png</file>
+        <file>img/pompe.png</file>
+        <file>img/pompe_left.png</file>
+        <file>img/pompe_right.png</file>
+        <file>img/sniper.png</file>
+        <file>img/sniper_left.png</file>
+        <file>img/sniper_right.png</file>
     </qresource>
     <qresource prefix="/sounds">
         <file>sounds/fun.mp3</file>

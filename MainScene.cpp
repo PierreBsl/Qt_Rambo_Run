@@ -27,7 +27,6 @@ gameOver * gameover;
 QMediaPlayer * gameOverSound;
 QMediaPlayer * endGameSound;
 EndGame * endgame;
-Monster * monster;
 Wall * wall;
 Wall * wall1;
 Void * vide;
@@ -38,9 +37,9 @@ MainScene::MainScene() {
     this->background.load(":/img/panorama.jpg");
     this->setSceneRect(0, 0, background.width(), background.height());
 
-    this->timer = new QTimer(this);    
+    this->timer = new QTimer(this);
 
-    player = new Player(pseudo, ":/img/test.png");
+    player = new Player(pseudo, "", "");
     player->setPos(0,350);
     this->addItem(player);
 }
@@ -57,9 +56,10 @@ void MainScene::startGame()
 
         setGameOn(true);
         score = new Score();
+        score->setPos(score->x()+5,score->y()+5);
         this->addItem(score);
         health = new Health();
-        health->setPos(health->x(),health->y()+25);
+        health->setPos(health->x()+5,health->y()+25);
         this->addItem(health);
         gameover = new gameOver();
         gameover->setPos(gameover->x()+450, gameover->y());
@@ -70,40 +70,50 @@ void MainScene::startGame()
 
         restartGameButton = new QPushButton("CLEAR GAME");
         restartGameButton->setObjectName(QString::fromUtf8("restartGameButton"));
-        restartGameButton->setFixedSize(200, 35);
-        restartGameButton->move(210,-36);
+        restartGameButton->setFixedSize(150, 35);
+        restartGameButton->move(160,-36);
         this->addWidget(restartGameButton);
 
         connect(restartGameButton, SIGNAL(clicked()), this, SLOT(clearGame()));
 
         quitGameButton = new QPushButton("QUIT GAME");
         quitGameButton->setObjectName(QString::fromUtf8("quitGameButton"));
-        quitGameButton->setFixedSize(200, 35);
-        quitGameButton->move(420,-36);
+        quitGameButton->setFixedSize(150, 35);
+        quitGameButton->move(320,-36);
         this->addWidget(quitGameButton);
 
         connect(quitGameButton, SIGNAL(clicked()), this, SLOT(quit()));
 
         pauseGameButton  = new QPushButton("PAUSE GAME");
         pauseGameButton->setFixedSize(100, 35);
-        pauseGameButton->move(870,-36);
+        pauseGameButton->move(785,-36);
         this->addWidget(pauseGameButton);
 
         resumeGameButton  = new QPushButton("RESUME GAME");
         resumeGameButton->setFixedSize(100, 35);
-        resumeGameButton->move(980,-36);
+        resumeGameButton->move(895,-36);
         this->addWidget(resumeGameButton);
 
-        chronoLCD = new QLCDNumber();
-        chronoLCD->setFixedSize(100, 35);
-        chronoLCD->move(1090,-36);
+        score_text = new QGraphicsTextItem(QString(pseudo + " :"));
+        score_text->moveBy(1000,-33);
+        score_text->setFont(QFont("Consolas", 12));
+        this->addItem(score_text);
 
+        chronoLCD = new QLCDNumber();
+        chronoLCD->setFixedSize(50, 35);
+        chronoLCD->move(1090,-36);
+        chronoLCD->setPalette(Qt::white);;
         this->addWidget(chronoLCD);
 
-        bestChronoLCD = new QLCDNumber();
-        bestChronoLCD->setFixedSize(100, 35);
-        bestChronoLCD->move(1200,-36);
+        bestScore_text = new QGraphicsTextItem(QString("Best Time :"));
+        bestScore_text->moveBy(1140,-33);
+        bestScore_text->setFont(QFont("Consolas", 12));
+        this->addItem(bestScore_text);
 
+        bestChronoLCD = new QLCDNumber();
+        bestChronoLCD->setFixedSize(50, 35);
+        bestChronoLCD->move(1250,-36);
+        bestChronoLCD->setPalette(Qt::white);;
         this->addWidget(bestChronoLCD);
 
         // Create Chrono and Game Dynamic
@@ -126,14 +136,15 @@ void MainScene::startGame()
 
         //build wall
         int tmp =  Utils::randInt(200, 1100);
+
+        wall = new Wall();
+        wall->setPos(tmp, 300);
+        this->addItem(wall);
         if (tmp >=900 || tmp <= 450){
             wall1 = new Wall();
             wall1->setPos(tmp-700, 300);
             this->addItem(wall1);
         }
-        wall = new Wall();
-        wall->setPos(tmp, 300);
-        this->addItem(wall);
 
         //build void
         int t = 0;
@@ -146,20 +157,17 @@ void MainScene::startGame()
         vide->setPos(t, 449);
         this->addItem(vide);
 
-        plateform = new Plateform(":/img/plateform.png");
+        plateform = new Plateform();
         plateform->setPos(t,449);
         this->addItem(plateform);
 
+        //spawn player
+        this->addItem(player);
 
         //spawn monster
-        monster = new Monster();
-        this->addItem(monster);
-
-        //spawn player
-        if(player){removeItem(player);}
-        player = new Player(pseudo, ":/img/test.png");
-        player->setPos(0,350);
-        this->addItem(player);
+        timerMonster = new QTimer;
+        connect(timerMonster, SIGNAL(timeout()), this, SLOT(spawnMonsters()));
+        timerMonster->start(5000);
 
         //add bullet sound
         bulletsound = new QMediaPlayer();
@@ -182,12 +190,75 @@ void MainScene::startGame()
         connect( restartGameButton, SIGNAL(clicked()), music, SLOT(stop()));
         connect( restartGameButton, SIGNAL(clicked()), endGameSound, SLOT(stop()));
 
-        timer_chrono -> start(1000); // 1000 ms
+        volume_text = new QGraphicsTextItem(QString("Volume :"));
+        volume_text->moveBy(485,-33);
+        volume_text->setFont(QFont("Consolas", 12));
+        this->addItem(volume_text);
 
-        bestChronoLCD -> display(bestTime);
+        volume_slider = new QSlider(Qt::Horizontal);
+        volume_slider->setValue(50);
+        volume_slider->setTickPosition(QSlider::TicksBothSides);
+        volume_slider->move(570, -35);
+        this->addWidget(volume_slider);
+
+        connect(volume_slider, SIGNAL(valueChanged(int)), music, SLOT(setVolume(int))) ;
+        connect(volume_slider, SIGNAL(valueChanged(int)), bulletsound, SLOT(setVolume(int))) ;
+        connect(volume_slider, SIGNAL(valueChanged(int)), gameOverSound, SLOT(setVolume(int))) ;
+        connect(volume_slider, SIGNAL(valueChanged(int)), endGameSound, SLOT(setVolume(int))) ;
+
+        timer_chrono -> start(1000); // 1000 ms
+        bestChronoLCD->display(0);
+    }
+}
+void MainScene::spawnMonsters(){
+    nbMonster++;
+
+    if (nbMonster <=3){
+        Monster * monster = new Monster();
+        this->addItem(monster);
     }
 }
 
+void MainScene::spawnPlayerTommyGun()
+{
+    if(player){removeItem(player);}
+
+    player = new Player(pseudo, ":/img/mitaillette_right.png", ":/img/mitaillette_left.png");
+    player->setPos(0,350);
+
+    this->startGame();
+
+}
+
+void MainScene::spawnPlayerGrenade()
+{
+    if(player){removeItem(player);}
+
+    player = new Player(pseudo, ":/img/grenade_right.png", ":/img/grenade_left.png");
+    player->setPos(0,350);
+
+    this->startGame();
+}
+
+void MainScene::spawnPlayerSniper()
+{
+    if(player){removeItem(player);}
+
+    player = new Player(pseudo, ":/img/sniper_right.png", ":/img/sniper_left.png");
+    player->setPos(0,350);
+
+    this->startGame();
+}
+
+void MainScene::spawnPlayerShotgun()
+{
+    if(player){removeItem(player);}
+
+    player = new Player(pseudo, ":/img/pompe_right.png", ":/img/pompe_left.png");
+    player->setPos(0,350);
+
+    this->startGame();
+}
 void MainScene::quit(){
 
     QApplication::quit();
@@ -199,6 +270,8 @@ void MainScene::clearGame()
 
     setGameOn(false);
 
+    //delete old player
+    if(player){removeItem(player);}
     if(gameover){removeItem(gameover);}
     if(score){removeItem(score);}
     if(health){removeItem(health);}
@@ -206,11 +279,17 @@ void MainScene::clearGame()
     if(wall){removeItem(wall);}
     if(wall1){removeItem(wall1);}
     if(vide){removeItem(vide);}
+    if(plateform){removeItem(plateform);}
+    if(score_text){removeItem(score_text);}
 
-
+    if (countTimer<bestTime){
+        bestChronoLCD -> display(countTimer);
+        bestTime=countTimer;
+    }else{
+        chronoLCD -> display(countTimer);
+        bestChronoLCD -> display(bestTime);
+    }
     resetCount();
-    chronoLCD -> display(countTimer);
-    bestChronoLCD -> display(bestTime);
 }
 
 void MainScene::pauseGame(){
@@ -236,6 +315,11 @@ void MainScene::setGameOn(bool value)
     gameOn = value;
 }
 
+int MainScene::getCountTimer()
+{
+    return countTimer;
+}
+
 void MainScene::drawBackground(QPainter *painter, const QRectF &rect) {
     Q_UNUSED(rect);
     painter->drawPixmap(QRectF(0,0,background.width(), background.height()), background, sceneRect());
@@ -246,7 +330,12 @@ void MainScene::update() {
     if (player->getPosition() != "Jumping") {
         player->setPreviousStatus(player->getPosition());
     }
-
+    if(player->collidesWithItem(plateform) && player->getPosition()=="Jumping"){
+        player->setPosition("Waiting");
+    }
+    if(player->collidesWithItem(plateform) && player->pos().y()+80>=plateform->pos().y()){
+        player->setPosition("Falling");
+    }
     player->move();
     player->collisions();
     plateform->move();
@@ -254,6 +343,10 @@ void MainScene::update() {
     // view update
     QGraphicsView * view = this->views().at(0);
     view->centerOn(player);
+
+    if(!player->collidesWithItem(plateform) && player->pos().y()<=349 && player->getPosition()!="Jumping" && player->getPosition()!="Falling"){
+        player->setPosition("Falling");
+    }
 }
 
 void MainScene::onTimer_Tick()
@@ -284,7 +377,6 @@ void MainScene::keyPressEvent(QKeyEvent *event)
         else if(event->key() == Qt::Key_Left){
             player->setPosition("Running");
             player->setDirection("Left");
-
         }
         else if(event->key() == Qt::Key_Right){
             player->setPosition("Running");

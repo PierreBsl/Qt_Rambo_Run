@@ -3,6 +3,7 @@
 #include "monster.h"
 #include "mainwindow.h"
 #include "MainScene.h"
+#include "plateform.h"
 #include "floor.h"
 #include <QObject>
 #include <QDebug>
@@ -24,20 +25,25 @@ extern QMediaPlayer * endGameSound;
 extern EndGame * endgame;
 extern Player * player;
 extern Wall * wall;
+extern Void * vide;
 extern Plateform * plateform;
 
-Player::Player(QString description, QString imageFileName) : QGraphicsPixmapItem(QPixmap(imageFileName)), description(description) {
+Player::Player(QString description, const QString& imgFileNameRight, const QString& imgFileNameLeft){
 
-    setPixmap(imageFileName);
+    this->setPixmap(QPixmap(imgFileNameRight));
     groundPosition = 350;
     onGround = true;
 
     wallContact=false;
     groundContact=true;
+    plateformContact=false;
     this->position = "Waiting";
     this->direction = "Right";
     this->setVelocity();
     this->gravity=-2;
+
+    imgRight = imgFileNameRight;
+    imgLeft = imgFileNameLeft;
 
 }
 
@@ -52,7 +58,6 @@ std::string Player::getPosition() {
 
 void Player::setwallContact()
 {
-
     QList<QGraphicsItem *>colliding_items = collidingItems();
     for(int i=0, n=colliding_items.size(); i<n; ++i){
         if(typeid(*(colliding_items[i])) == typeid(Wall)){wallContact = true;}
@@ -60,8 +65,14 @@ void Player::setwallContact()
     }
 }
 void Player::setgroundContact(){
-    if (this->y()==350){groundContact = true;
-    }else{groundContact = false;}
+
+    if (this->y()==350){
+        groundContact = true;
+    }
+    else {
+        groundContact = false;
+    }
+
 }
 
 void Player::setDirection(std::string direction) {
@@ -109,15 +120,9 @@ void Player::collisions()
             }
         }
         if(typeid(*(colliding_items[i])) == typeid(Void)){
-            gameover->display();
+            groundPosition=false;
+            this->position = "Falling";
         }
-
-        if(!(typeid(*(colliding_items[i])) == typeid(Floor)) && player->y()>450){
-            qDebug() << "TOUCHED";
-            gameover->display();
-
-        }
-
         if(typeid(*(colliding_items[i])) == typeid(EndGame)){
             qDebug() << "End Game";
             if (endGameSound->state() == QMediaPlayer::PlayingState){
@@ -130,11 +135,22 @@ void Player::collisions()
             scene()->removeItem(this);
             timer_chrono->stop();
         }
+        if(typeid(*(colliding_items[i])) == typeid(Plateform)){
+            qDebug()<<"collide plat";
+            plateformContact = true;
+        }
+        if(typeid(*(colliding_items[i])) != typeid(Plateform)){
+            qDebug()<<" non collide plat";
+
+            plateformContact = false;
+        }
     }
 }
 
 void Player::waiting() {
-    if(!groundContact){
+
+    if(player->pos().y()<349 && !plateformContact){
+
         this->falling();
     }
 }
@@ -143,11 +159,13 @@ void Player::running() {
 
     if(groundContact) {
         if (direction == "Right") {
+            this->setPixmap(QPixmap(imgRight));
             this->moveBy(10, 0);
             if(wallContact || this->x()-10 > 1200){
                 this->moveBy(-25, 0);
             }
         } else if (direction == "Left") {
+            this->setPixmap(QPixmap(imgLeft));
             this->moveBy(-10, 0);
             if (wallContact || this->x()-10 < 0) {
                 this->moveBy(25, 0);
@@ -158,7 +176,7 @@ void Player::running() {
     }
 }
 
-//jump() function code has been inspired by the below video
+//jump() function code had been inspired by the video (link below)
 //Math for Game Developers - Jumping and Gravity (Time Delta, Game Loop)
 //https://www.youtube.com/watch?v=c4b9lCfSDQM
 
@@ -187,8 +205,8 @@ void Player::jumping() {
 }
 
 void Player::falling() {
-    if(wallContact||player->x()<=0){
-        if(this->pos().y()>=350){
+    if(wallContact){
+        if(this->y()>350){
             if(this->direction=="Right"){
                 this->direction="Left";
             } else if(this->direction=="Left"){
@@ -198,7 +216,6 @@ void Player::falling() {
             velocityX = 0;
         }
     }
-
     if(this->direction=="Right"){
         this->moveBy(velocityX*5,velocityY*5);
     } else if(this->direction=="Left"){
@@ -206,9 +223,18 @@ void Player::falling() {
     }
     velocityY = velocityY - gravity * 0.15;
 
+    if(plateformContact){
+        this->position = "Waiting";
+        this->setVelocity();
+        return;
+    }
     if(this->pos().y()>=349){
         this->position = "Waiting";
         this->setVelocity();
         return;
+    }
+
+    if(this->pos().y()>=400){
+        gameover->display();
     }
 }

@@ -9,6 +9,7 @@
 
 extern Score * score;
 extern Player * player;
+extern MainScene * mainScene;
 
 Bullet::Bullet(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 {
@@ -31,14 +32,13 @@ void Bullet::move()
             score->increase();
 
             //remove them both
-            qDebug() << "Colliding";
             scene()->removeItem(colliding_items[i]);
             scene()->removeItem(this);
+
             //delete them both
             delete colliding_items[i];
             delete this;
-            qDebug() << "Monster killed";
-            return;
+
         }
     }
     //move bullet up

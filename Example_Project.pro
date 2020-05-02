@@ -19,7 +19,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     MainScene.cpp \
     bullet.cpp \
-    chrono.cpp \
     endgame.cpp \
     floor.cpp \
     gameover.cpp \
@@ -38,7 +37,6 @@ HEADERS += \
     MainScene.h \
     Utils.h \
     bullet.h \
-    chrono.h \
     endgame.h \
     floor.h \
     gameover.h \

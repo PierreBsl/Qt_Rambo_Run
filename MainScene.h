@@ -1,6 +1,5 @@
 #ifndef MYSCENE_H
 #define MYSCENE_H
-#include "chrono.h"
 #include "player.h"
 #include "bullet.h"
 #include "score.h"
@@ -22,6 +21,9 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QRectF>
+#include <QSlider>
+#include <QPushButton>
+#include <QLCDNumber>
 #include <QGraphicsPixmapItem>
 
 extern Player * player;
@@ -46,7 +48,14 @@ private :
     QLCDNumber * chronoLCD;
     QLCDNumber * bestChronoLCD;
 
+    QSlider * volume_slider;
+    QGraphicsTextItem * volume_text;
+    QGraphicsTextItem * score_text;
+    QGraphicsTextItem * bestScore_text;
 
+    QTimer * timerMonster;
+
+    int nbMonster=0;
 
     int countTimer;
     int bestTime=100;
@@ -74,9 +83,10 @@ public:
     bool getGameOn() const;
     void setGameOn(bool value);
 
+    int getCountTimer();
+
     MainScene();
     void drawBackground(QPainter* painter, const QRectF& rect);
-    const Player * getPlayer(){return player;}
     virtual ~MainScene();
 
     QTimer * timer;
@@ -86,6 +96,13 @@ public slots :
     void clearGame();
     void update();
     void onTimer_Tick();
+    void spawnMonsters();
+
+    void spawnPlayerTommyGun();
+    void spawnPlayerGrenade();
+    void spawnPlayerSniper();
+    void spawnPlayerShotgun();
+
 
 };
 

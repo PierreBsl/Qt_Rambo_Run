@@ -10,8 +10,7 @@
 #include <stdlib.h>
 
 extern MainScene * mainScene;
-extern Health * health;
-extern Monster * monster;
+extern Wall * wall;
 
 Monster::Monster(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 {
@@ -19,6 +18,7 @@ Monster::Monster(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
     setPos(1200, 390);
     //drew the rect
     setPixmap(QPixmap(":/img/enemy1.png"));
+    this->speed = 5;
 
     //connect
     QTimer * timer = new QTimer();
@@ -29,17 +29,18 @@ Monster::Monster(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 
 void Monster::move()
 {
-    //move monster left
-    setPos(x()-5, y());
+    QPointF pos = this->pos();
 
-    if(pos().x() < 0){
-        scene()->removeItem(this);
-        delete this;
-        qDebug() << "monster deleted";
-    }
-    if(pos().x() == 700){
-        monster = new Monster();
-        mainScene->addItem(monster);
-    }
+        int newX = pos.x() - 5;
+
+        if (newX < wall->x() ) {
+            speed = - 5;
+        }
+
+        if (newX > this->scene()->width()) {
+            speed = 5;
+        }
+
+        this->setPos(newX, pos.y());
 }
 

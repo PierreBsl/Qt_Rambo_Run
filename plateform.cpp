@@ -3,19 +3,12 @@
 
 extern Void * vide;
 
+Plateform::Plateform(QGraphicsItem *parent): QGraphicsPixmapItem(parent)
+{
+    setPixmap(QPixmap(":/img/plateform.png"));
+    this->speed = 2;
+}
 void Plateform::move()
 {
-    QPointF pos = this->pos();
-
-    int newX = pos.x() - speed;
-
-    if (newX < vide->x()) {
-        speed = -3;
-    }
-
-    if (newX > vide->x()+190) {
-        speed = 3;
-    }
-
-    this->setPos(newX, pos.y());
+    this->setPos(vide->x(), 285);
 }
