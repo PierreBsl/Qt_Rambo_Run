@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     volume_slider = new QSlider(Qt::Horizontal);
     volume_slider->setValue(50);
 
-    QPushButton * resumeGameButton  = new QPushButton("RESUME GAME");
+    resumeGameButton = new QPushButton("RESUME GAME");
 
     QVBoxLayout *vbox2 = new QVBoxLayout;
     vbox2->addWidget(volumeMusic);
@@ -130,8 +130,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     textZone->setText(text);
     textZone->show();
 
-    resumeGameButton  = new QPushButton("RESUME GAME");
-    QPushButton * clearScoresButton  = new QPushButton("CLEAR SCORES");
+    clearScoresButton  = new QPushButton("CLEAR SCORES");
 
     QVBoxLayout *vbox3 = new QVBoxLayout;
     vbox3->addWidget(textZone);
@@ -168,8 +167,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(quitGameButton, SIGNAL(clicked()), mainScene, SLOT(quit()));
 
     connect(resumeGameButton, SIGNAL(clicked()), mainScene, SLOT(resumeGame()));
-    connect(clearScoresButton, SIGNAL(clicked()), mainScene, SLOT(eraseText()));
 
+    connect(clearScoresButton, SIGNAL(clicked()), mainScene, SLOT(eraseText()));
 
     connect(volume_music, SIGNAL(valueChanged(int)), music, SLOT(setVolume(int))) ;
     connect(volume_slider, SIGNAL(valueChanged(int)), bulletsound, SLOT(setVolume(int))) ;

@@ -105,7 +105,7 @@ void MainScene::startGame()
     this->addItem(wall4);
 
     wall5 = new Wall();
-    wall5->setPos(2750, 310);
+    wall5->setPos(2734, 310);
     this->addItem(wall5);
 
     //build floor
@@ -227,8 +227,6 @@ void MainScene::clearGame()
     //delete old player
     if(player){removeItem(player);}
     if(gameover){removeItem(gameover);}
-    if(score){removeItem(score);}
-    if(health){removeItem(health);}
     if(endgame){removeItem(endgame);}
     delete endGameSound;
     delete gameOverSound;
@@ -281,9 +279,8 @@ void MainScene::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MainScene::update() {
 
-//    textTimer->setPlainText(QString::number(timer_chrono->elapsed()) + ":" + QString::number(timer_chrono->elapsed() / 10 % 100));
-    textTimer->setPlainText("test");
-    qDebug()<<textTimer;
+//    textTimer->setPlainText(QStringnumber(timer_chrono->elapsed()) + ":" + QString::number(timer_chrono->elapsed() / 10 % 100));
+//    qDebug()<<textTimer;
     score->setPos(player->x()-30, player->y()-50);
     health->setPos(player->x()-30, player->y()-30);
 

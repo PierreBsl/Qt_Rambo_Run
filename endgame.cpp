@@ -2,6 +2,8 @@
 
 extern Player * player;
 extern MainScene * mainScene;
+extern Score * score;
+extern Health * health;
 
 EndGame::EndGame(QGraphicsItem *parent): QGraphicsPixmapItem(parent)
 {

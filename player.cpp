@@ -151,17 +151,17 @@ void Player::running() {
 
     if(groundContact) {
         if (direction == "Right") {
+            this->setPixmap(QPixmap(imgRight));
             this->moveBy(10, 0);
             if(wallContact || this->x()-10 > 2900){
                 this->moveBy(-25, 0);
             }
-            this->setPixmap(QPixmap(imgRight));
         } else if (direction == "Left") {
+            this->setPixmap(QPixmap(imgLeft));
             this->moveBy(-10, 0);
             if (wallContact || this->x()-10 < 0) {
                 this->moveBy(25, 0);
             }
-            this->setPixmap(QPixmap(imgLeft));
         }
     } else {
         position = "Falling";

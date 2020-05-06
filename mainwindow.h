@@ -17,6 +17,8 @@ class MainWindow : public QMainWindow
 private :
     QGraphicsView* mainView;
     QPushButton * pauseGameButton;
+    QPushButton * resumeGameButton;
+    QPushButton * clearScoresButton;
 
     QSlider * volume_slider;
     QSlider * volume_music;

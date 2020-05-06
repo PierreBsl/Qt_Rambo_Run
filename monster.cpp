@@ -23,21 +23,20 @@ void Monster::move()
 {
         int newX = this->x();
 
-
         if (start >= 60){
             if(direction){
                 direction = false;
-//                setPixmap(QPixmap(":/img/enemyRight.png"));
             }else {
                 direction = true;
-//                setPixmap(QPixmap(":/img/enemyLeft.png"));
             }
             start = 0;
         }
         if (direction) {
+            setPixmap(QPixmap(":/img/enemyLeft.png"));
             speed = - 3;
         }
         else {
+            setPixmap(QPixmap(":/img/enemyRight.png"));
             speed = 3;
         }
         start ++;

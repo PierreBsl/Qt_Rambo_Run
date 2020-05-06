@@ -11,6 +11,7 @@ extern MainScene* mainScene;
 extern QGraphicsView * playerView;
 extern Player * player;
 extern Health * health;
+extern Score * score;
 extern Monster * monster;
 extern gameOver * gameover;
 extern QMediaPlayer * gameOverSound;
@@ -31,6 +32,8 @@ void gameOver::display(){
     }
     mainScene->addItem(gameover);
     mainScene->removeItem(player);
+    if(score){scene()->removeItem(score);}
+    if(health){scene()->removeItem(health);}
 //    timer_chrono->stop();
 
 }
