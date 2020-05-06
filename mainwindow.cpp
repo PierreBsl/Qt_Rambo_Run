@@ -88,8 +88,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 
     // Page 2
 
-    QTextEdit * volumeMusic = new QTextEdit();
+    QTextEdit * volumeMusic = new QTextEdit("Music Volume");
+    volumeMusic->setReadOnly(true);
     QTextEdit * volumeSlider = new QTextEdit("Effects Volume");
+    volumeSlider->setReadOnly(true);
     volume_music = new QSlider(Qt::Horizontal);
     volume_music->setValue(50);
     volume_slider = new QSlider(Qt::Horizontal);

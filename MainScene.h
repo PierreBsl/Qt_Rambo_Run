@@ -49,7 +49,7 @@ private :
 
     int chrono;
 
-    QGraphicsTextItem * textTimer ;
+    QString texte ;
 
     Floor * floor;
     Wall * wall1;

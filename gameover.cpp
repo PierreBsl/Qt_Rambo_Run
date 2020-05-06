@@ -34,7 +34,6 @@ void gameOver::display(){
     mainScene->removeItem(player);
     if(score){scene()->removeItem(score);}
     if(health){scene()->removeItem(health);}
-//    timer_chrono->stop();
 
 }
 void gameOver::setMute(){

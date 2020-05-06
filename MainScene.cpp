@@ -48,8 +48,6 @@ MainScene::MainScene() {
     this->timer = new QTimer(this);
     this->timerMonster = new QTimer(this);
     timer_chrono = new QTime();
-    textTimer=new QGraphicsTextItem();
-
     player = new Player(pseudo, "", "");
     player->setPos(0,350);
     this->addItem(player);
@@ -221,7 +219,6 @@ void MainScene::quit(){
 void MainScene::clearGame()
 {
     timer->stop();
-
     setGameOn(false);
 
     //delete old player
@@ -230,7 +227,6 @@ void MainScene::clearGame()
     if(endgame){removeItem(endgame);}
     delete endGameSound;
     delete gameOverSound;
-
 
     if(wall1){removeItem(wall1);}
     if(wall2){removeItem(wall2);}
@@ -250,8 +246,6 @@ void MainScene::clearGame()
     if(monster1){removeItem(monster1);}
     if(monster2){removeItem(monster2);}
     if(monster3){removeItem(monster3);}
-
-    if(floor){removeItem(floor);}
 
 }
 
@@ -279,8 +273,8 @@ void MainScene::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MainScene::update() {
 
-//    textTimer->setPlainText(QStringnumber(timer_chrono->elapsed()) + ":" + QString::number(timer_chrono->elapsed() / 10 % 100));
-//    qDebug()<<textTimer;
+    texte = pseudo + ";" + QString::number(timer_chrono->elapsed() / 100000) + ":" + QString::number(timer_chrono->elapsed() / 1000) + ":" + QString::number(timer_chrono->elapsed() / 10 % 100) + "\n";
+
     score->setPos(player->x()-30, player->y()-50);
     health->setPos(player->x()-30, player->y()-30);
 
@@ -320,16 +314,17 @@ void MainScene::update() {
 
 void MainScene::writeScore(){
 
-    QString fichier = ":/scores.txt";
-        QFile file(fichier); // Appel du constructeur de la classe QFile
+    QFile file("scores.txt");
 
-        if (file.open(QIODevice::Append | QIODevice::Text)) {
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug()<<"oui";
 
-            QTextStream out(&file);
-            out << pseudo << ";" << textTimer <<"\n";
-
-            file.close();
-        }
+        QTextStream flux(&file);
+        flux << texte;
+        file.write(texte.toLatin1(),texte.size());
+        file.close();
+    }
+    else {qDebug()<<"erreur ouverture fichier";}
 }
 
 bool MainScene::collidingPlateform()

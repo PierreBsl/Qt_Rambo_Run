@@ -1,4 +1,3 @@
-Quelques valeurs dans le fichier texte
-d'autres valeurs
-encore d'autres valeurs
-pourquoi ça ne fonctionne pas
+Pierre;00:14:93
+NewNow;00:13:65
+Johnson;00:16:26

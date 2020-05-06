@@ -15,6 +15,5 @@ void EndGame::endScreen()
 {
     setPixmap(QPixmap(":/img/Win.png"));
     setPos(player->pos().x()-500,player->pos().y()-225);
-
     mainScene->writeScore();
 }
