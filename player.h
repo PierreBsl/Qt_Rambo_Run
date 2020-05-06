@@ -34,7 +34,7 @@ public:
 
     void setDirection(std::string);
     std::string getDirection();
-    void setVelocity();
+    void setSpeed();
     void setPreviousStatus(std::string);
 
     void move();
@@ -59,8 +59,8 @@ private :
     std::string previousStatus;
     std::string direction;
     std::string gun;
-    float vitesseX;
-    float vitesseY;
+    float speedX;
+    float speedY;
     float gravity;
 
     bool wallContact;

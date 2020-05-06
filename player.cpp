@@ -39,7 +39,7 @@ Player::Player(QString description, const QString& imgFileNameRight, const QStri
     plateformContact=false;
     this->position = "Waiting";
     this->direction = "Right";
-    this->setVelocity();
+    this->setSpeed();
     this->gravity=-2;
 
     imgRight = imgFileNameRight;
@@ -82,9 +82,9 @@ std::string Player::getDirection() {
     return this->direction;
 }
 
-void Player::setVelocity(){
-    this->vitesseX=2;
-    this->vitesseY=3;
+void Player::setSpeed(){
+    this->speedX=2;
+    this->speedY=3;
 }
 
 void Player::setPreviousStatus(std::string previousStatus) {
@@ -140,13 +140,38 @@ void Player::collisions()
     }
 }
 
-void Player::waiting() {
-
-    if(player->pos().y()<349 && !plateformContact){
-        this->falling();
+void Player::falling() {
+    if(wallContact || player->pos().x()<0){
+        if(this->y()>350){
+            if(this->direction=="Right"){
+                this->direction="Left";
+            } else if(this->direction=="Left"){
+                this->direction="Right";
+            }
+        } else {
+            speedX = 0;
+        }
     }
+    if(this->direction=="Right"){
+        this->moveBy(speedX*5,speedY*5);
+    } else if(this->direction=="Left"){
+        this->moveBy(-speedX*5,speedY*5);
+    }
+    if(player->pos().y()>380){
+        gameover->display();
+    }
+    if(plateformContact){
+        this->position = "Waiting";
+        this->setSpeed();
+        return;
+    }
+    if(this->pos().y()>=349){
+        this->position = "Waiting";
+        this->setSpeed();
+        return;
+    }
+    speedY = speedY - gravity * 0.15;
 }
-
 void Player::running() {
 
     if(groundContact) {
@@ -167,66 +192,36 @@ void Player::running() {
         position = "Falling";
     }
 }
+void Player::waiting() {
 
-//jump() function code had been inspired by the video (link below)
+    if(player->pos().y()<349 && !plateformContact){
+        this->falling();
+    }
+}
+
+//jump() function code had been inspired by the Youtube video (search for :)
 //Math for Game Developers - Jumping and Gravity (Time Delta, Game Loop)
-//https://www.youtube.com/watch?v=c4b9lCfSDQM
 
 void Player::jumping() {
     if(this->previousStatus=="Waiting"){
-        if (vitesseY < 0 ){
+        if (speedY < 0 ){
             this->position = "Falling";
             return;
         } else {
-            vitesseX=0;
-            this->moveBy(0, -vitesseY * 10);
+            speedX=0;
+            this->moveBy(0, -speedY * 10);
         }
     } else {
-        if (vitesseY < 0 || wallContact){
+        if (speedY < 0 || wallContact){
             this->position = "Falling";
             return;
         } else {
             if (direction == "Right") {
-                this->moveBy(vitesseX * 7, -vitesseY * 10);
+                this->moveBy(speedX * 7, -speedY * 10);
             } else if (direction == "Left") {
-                this->moveBy(-vitesseX * 10, -vitesseY * 10);
+                this->moveBy(-speedX * 10, -speedY * 10);
             }
         }
     }
-    vitesseY = vitesseY + gravity*0.15;
-}
-
-void Player::falling() {
-    if(wallContact || player->pos().x()<0){
-        if(this->y()>350){
-            if(this->direction=="Right"){
-                this->direction="Left";
-            } else if(this->direction=="Left"){
-                this->direction="Right";
-            }
-        } else {
-            vitesseX = 0;
-        }
-    }
-    if(this->direction=="Right"){
-        this->moveBy(vitesseX*5,vitesseY*5);
-    } else if(this->direction=="Left"){
-        this->moveBy(-vitesseX*5,vitesseY*5);
-    }
-    if(player->pos().y()>380){
-        gameover->display();
-    }
-    if(plateformContact){
-        this->position = "Waiting";
-        this->setVelocity();
-        return;
-    }
-    if(this->pos().y()>=349){
-        this->position = "Waiting";
-        this->setVelocity();
-        return;
-    }
-
-    vitesseY = vitesseY - gravity * 0.15;
-
+    speedY = speedY + gravity*0.15;
 }
