@@ -18,7 +18,6 @@
 extern MainScene * mainScene;
 extern Health * health;
 extern Monster * monster;
-extern QTimer * timer_chrono;
 extern gameOver * gameover;
 extern QMediaPlayer * gameOverSound;
 extern QMediaPlayer * endGameSound;
@@ -27,6 +26,7 @@ extern Player * player;
 extern Wall * wall;
 extern Void * vide;
 extern Plateform * plateform;
+
 
 Player::Player(QString description, const QString& imgFileNameRight, const QString& imgFileNameLeft){
 
@@ -83,8 +83,8 @@ std::string Player::getDirection() {
 }
 
 void Player::setVelocity(){
-    this->velocityX=2;
-    this->velocityY=3;
+    this->vitesseX=2;
+    this->vitesseY=3;
 }
 
 void Player::setPreviousStatus(std::string previousStatus) {
@@ -120,8 +120,7 @@ void Player::collisions()
             }
         }
         if(typeid(*(colliding_items[i])) == typeid(Void)){
-            groundPosition=false;
-            this->position = "Falling";
+            this->position="Falling";
         }
         if(typeid(*(colliding_items[i])) == typeid(EndGame)){
             qDebug() << "End Game";
@@ -133,16 +132,10 @@ void Player::collisions()
             }
             endgame->endScreen();
             scene()->removeItem(this);
-            timer_chrono->stop();
+//            timer_chrono->stop();
         }
         if(typeid(*(colliding_items[i])) == typeid(Plateform)){
-            qDebug()<<"collide plat";
             plateformContact = true;
-        }
-        if(typeid(*(colliding_items[i])) != typeid(Plateform)){
-            qDebug()<<" non collide plat";
-
-            plateformContact = false;
         }
     }
 }
@@ -150,7 +143,6 @@ void Player::collisions()
 void Player::waiting() {
 
     if(player->pos().y()<349 && !plateformContact){
-
         this->falling();
     }
 }
@@ -159,17 +151,17 @@ void Player::running() {
 
     if(groundContact) {
         if (direction == "Right") {
-            this->setPixmap(QPixmap(imgRight));
             this->moveBy(10, 0);
-            if(wallContact || this->x()-10 > 1200){
+            if(wallContact || this->x()-10 > 2900){
                 this->moveBy(-25, 0);
             }
+            this->setPixmap(QPixmap(imgRight));
         } else if (direction == "Left") {
-            this->setPixmap(QPixmap(imgLeft));
             this->moveBy(-10, 0);
             if (wallContact || this->x()-10 < 0) {
                 this->moveBy(25, 0);
             }
+            this->setPixmap(QPixmap(imgLeft));
         }
     } else {
         position = "Falling";
@@ -182,30 +174,30 @@ void Player::running() {
 
 void Player::jumping() {
     if(this->previousStatus=="Waiting"){
-        if (velocityY < 0 ){
+        if (vitesseY < 0 ){
             this->position = "Falling";
             return;
         } else {
-            velocityX=0;
-            this->moveBy(0, -velocityY * 10);
+            vitesseX=0;
+            this->moveBy(0, -vitesseY * 10);
         }
     } else {
-        if (velocityY < 0 || wallContact){
+        if (vitesseY < 0 || wallContact){
             this->position = "Falling";
             return;
         } else {
             if (direction == "Right") {
-                this->moveBy(velocityX * 7, -velocityY * 10);
+                this->moveBy(vitesseX * 7, -vitesseY * 10);
             } else if (direction == "Left") {
-                this->moveBy(-velocityX * 10, -velocityY * 10);
+                this->moveBy(-vitesseX * 10, -vitesseY * 10);
             }
         }
     }
-    velocityY = velocityY + gravity*0.15;
+    vitesseY = vitesseY + gravity*0.15;
 }
 
 void Player::falling() {
-    if(wallContact){
+    if(wallContact || player->pos().x()<0){
         if(this->y()>350){
             if(this->direction=="Right"){
                 this->direction="Left";
@@ -213,16 +205,17 @@ void Player::falling() {
                 this->direction="Right";
             }
         } else {
-            velocityX = 0;
+            vitesseX = 0;
         }
     }
     if(this->direction=="Right"){
-        this->moveBy(velocityX*5,velocityY*5);
+        this->moveBy(vitesseX*5,vitesseY*5);
     } else if(this->direction=="Left"){
-        this->moveBy(-velocityX*5,velocityY*5);
+        this->moveBy(-vitesseX*5,vitesseY*5);
     }
-    velocityY = velocityY - gravity * 0.15;
-
+    if(player->pos().y()>380){
+        gameover->display();
+    }
     if(plateformContact){
         this->position = "Waiting";
         this->setVelocity();
@@ -234,7 +227,6 @@ void Player::falling() {
         return;
     }
 
-    if(this->pos().y()>=400){
-        gameover->display();
-    }
+    vitesseY = vitesseY - gravity * 0.15;
+
 }

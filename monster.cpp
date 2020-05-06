@@ -10,37 +10,38 @@
 #include <stdlib.h>
 
 extern MainScene * mainScene;
-extern Wall * wall;
 
 Monster::Monster(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 {
-    //set Position
-    setPos(1200, 390);
     //drew the rect
-    setPixmap(QPixmap(":/img/enemy1.png"));
-    this->speed = 5;
+    setPixmap(QPixmap(":/img/enemyLeft.png"));
+    this->speed = 3;
 
-    //connect
-    QTimer * timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(move()));
-
-    timer->start(50);
 }
 
 void Monster::move()
 {
-    QPointF pos = this->pos();
+        int newX = this->x();
 
-        int newX = pos.x() - 5;
 
-        if (newX < wall->x() ) {
-            speed = - 5;
+        if (start >= 60){
+            if(direction){
+                direction = false;
+//                setPixmap(QPixmap(":/img/enemyRight.png"));
+            }else {
+                direction = true;
+//                setPixmap(QPixmap(":/img/enemyLeft.png"));
+            }
+            start = 0;
         }
-
-        if (newX > this->scene()->width()) {
-            speed = 5;
+        if (direction) {
+            speed = - 3;
         }
-
-        this->setPos(newX, pos.y());
+        else {
+            speed = 3;
+        }
+        start ++;
+        newX = newX + speed;
+        this->setPos(newX, this->y());
 }
 

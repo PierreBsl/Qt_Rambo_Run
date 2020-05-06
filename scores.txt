@@ -1,0 +1,4 @@
+Quelques valeurs dans le fichier texte
+d'autres valeurs
+encore d'autres valeurs
+pourquoi ça ne fonctionne pas

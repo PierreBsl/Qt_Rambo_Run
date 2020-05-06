@@ -14,16 +14,48 @@ extern MainScene * mainScene;
 Bullet::Bullet(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent)
 {
     //drew the rect
-    setPixmap(QPixmap(":/img/bullet1.png"));
+    setPixmap(QPixmap(":/img/bulletRight.png"));
     //connect
     QTimer * timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(move()));
-
     timer->start(50);
+    if(player->getDirection()=="Right"){
+        connect(timer, SIGNAL(timeout()), this, SLOT(moveRight()));
+    }
+    if(player->getDirection()=="Left"){
+        connect(timer, SIGNAL(timeout()), this, SLOT(moveLeft()));
+    }
+
 }
 
-void Bullet::move()
+void Bullet::moveRight()
 {
+    // if bullet collides a monster
+    QList<QGraphicsItem *>colliding_items = collidingItems();
+    for(int i=0, n=colliding_items.size(); i<n; ++i){
+        if(typeid(*(colliding_items[i])) == typeid(Monster)){
+            //increase score
+            score->increase();
+            //remove them both
+            scene()->removeItem(colliding_items[i]);
+            scene()->removeItem(this);
+
+            //delete them both
+            delete colliding_items[i];
+            delete this;
+        }
+    }
+    //move bullet up
+    setPos(x()+20, y());
+    if(this->x() >= 3000){
+        scene()->removeItem(this);
+        delete this;
+        qDebug() << "Bullet deleted";
+    }
+
+}
+void Bullet::moveLeft()
+{
+    setPixmap(QPixmap(":/img/bulletLeft.png"));
     // if bullet collides a monster
     QList<QGraphicsItem *>colliding_items = collidingItems();
     for(int i=0, n=colliding_items.size(); i<n; ++i){
@@ -38,12 +70,11 @@ void Bullet::move()
             //delete them both
             delete colliding_items[i];
             delete this;
-
         }
     }
     //move bullet up
-    setPos(x()+20, y());
-    if(pos().x() > 1200){
+    setPos(x()-20, y());
+    if(this->pos().x()<= 0){
         scene()->removeItem(this);
         delete this;
         qDebug() << "Bullet deleted";

@@ -18,10 +18,12 @@
 #include <QWidget>
 #include <QPixmap>
 #include <QTimer>
+#include <QTime>
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QRectF>
 #include <QSlider>
+#include <QLabel>
 #include <QPushButton>
 #include <QLCDNumber>
 #include <QGraphicsPixmapItem>
@@ -35,33 +37,40 @@ class MainScene : public QGraphicsScene, public QGraphicsPixmapItem {
 private :
 
     QPixmap background;
-
-    QMediaPlayer * bulletsound;
-
-    QPushButton * pauseGameButton;
-    QPushButton * resumeGameButton;
-    QPushButton * restartGameButton;
-    QPushButton * quitGameButton;
+    QGraphicsPixmapItem * gameOverPix;
 
     QPushButton * m_dialogButton;
 
-    QLCDNumber * chronoLCD;
-    QLCDNumber * bestChronoLCD;
-
-    QSlider * volume_slider;
-    QGraphicsTextItem * volume_text;
-    QGraphicsTextItem * score_text;
-    QGraphicsTextItem * bestScore_text;
+    QTimer * timer;
 
     QTimer * timerMonster;
 
     int nbMonster=0;
 
-    int countTimer;
-    int bestTime=100;
-    bool gameOn;
+    int chrono;
+
+    QGraphicsTextItem * textTimer ;
 
     Floor * floor;
+    Wall * wall1;
+    Wall * wall2;
+    Wall * wall3;
+    Wall * wall4;
+    Wall * wall5;
+
+    Void * vide;
+    Void * vide1;
+    Void * vide2;
+
+    Plateform * plateform;
+    Plateform * plateform1;
+    Plateform * plateform2;
+
+    Monster * monster;
+    Monster * monster1;
+    Monster * monster2;
+    Monster * monster3;
+
     void showGameOverGraphics();
     void hideGameOverGraphics();
 
@@ -74,8 +83,6 @@ private slots:
 public:
 
     void startGame();
-    void resetCount();
-    void updateCount();
 
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent *event);
@@ -83,26 +90,25 @@ public:
     bool getGameOn() const;
     void setGameOn(bool value);
 
-    int getCountTimer();
-
     MainScene();
     void drawBackground(QPainter* painter, const QRectF& rect);
     virtual ~MainScene();
 
-    QTimer * timer;
-    QGraphicsPixmapItem * gameOverPix;
+    void writeScore();
+
+    bool collidingPlateform();
 
 public slots :
+
     void clearGame();
     void update();
-    void onTimer_Tick();
-    void spawnMonsters();
 
     void spawnPlayerTommyGun();
     void spawnPlayerGrenade();
     void spawnPlayerSniper();
     void spawnPlayerShotgun();
 
+    void eraseText();
 
 };
 

@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>img/bullet1.png</file>
-        <file>img/enemy1.png</file>
         <file>img/game_over.png</file>
         <file>img/spike3.png</file>
         <file>img/noir.jpg</file>
@@ -23,6 +21,11 @@
         <file>img/sniper.png</file>
         <file>img/sniper_left.png</file>
         <file>img/sniper_right.png</file>
+        <file>scores.txt</file>
+        <file>img/bulletLeft.png</file>
+        <file>img/bulletRight.png</file>
+        <file>img/enemyLeft.png</file>
+        <file>img/enemyRight.png</file>
     </qresource>
     <qresource prefix="/sounds">
         <file>sounds/fun.mp3</file>

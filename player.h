@@ -49,10 +49,6 @@ public:
     void setwallContact();
     void setgroundContact();
 
-    bool wallContact;
-    bool plateformContact;
-    bool groundContact;
-
     QString imgRight;
     QString imgLeft;
 
@@ -63,9 +59,13 @@ private :
     std::string previousStatus;
     std::string direction;
     std::string gun;
-    float velocityX;
-    float velocityY;
+    float vitesseX;
+    float vitesseY;
     float gravity;
+
+    bool wallContact;
+    bool plateformContact = false;
+    bool groundContact;
 
     QString description;
     qreal groundPosition;

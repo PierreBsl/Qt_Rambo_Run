@@ -1,5 +1,8 @@
 #include "endgame.h"
 
+extern Player * player;
+extern MainScene * mainScene;
+
 EndGame::EndGame(QGraphicsItem *parent): QGraphicsPixmapItem(parent)
 {
     setPixmap(QPixmap(":/img/porte.jpg"));
@@ -9,5 +12,7 @@ EndGame::EndGame(QGraphicsItem *parent): QGraphicsPixmapItem(parent)
 void EndGame::endScreen()
 {
     setPixmap(QPixmap(":/img/Win.png"));
-    setPos(450,100);
+    setPos(player->pos().x()-500,player->pos().y()-225);
+
+    mainScene->writeScore();
 }

@@ -12,6 +12,8 @@ class Monster:public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 private:
     int speed;
+    int start = 0;
+    bool direction = false;
 public:
     Monster(QGraphicsItem * parent=0);
     int getSpeed() const { return speed; }

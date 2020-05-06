@@ -2,6 +2,9 @@
 #define ENDGAME_H
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
+#include <QTime>
+#include <MainScene.h>
+#include "player.h"
 #include "Utils.h"
 
 class EndGame: public QGraphicsPixmapItem

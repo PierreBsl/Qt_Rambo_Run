@@ -1,5 +1,6 @@
 QT       += core gui \
-            multimedia
+            multimedia \
+            core
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -34,6 +35,7 @@ SOURCES += \
     MainScene.cpp
 
 HEADERS += \
+    Chrono.h \
     MainScene.h \
     Utils.h \
     bullet.h \
@@ -61,3 +63,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    scores.txt
